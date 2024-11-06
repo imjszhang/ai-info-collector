@@ -2,7 +2,7 @@ name: Generate Markdown
 
 on:
   schedule:
-    - cron: '01 7 * * *'  # 每天UTC时间早上7:01（北京时间下午3:01自动运行）
+    - cron: '0 */3 * * *'  # 每3小时运行一次
   workflow_dispatch:  # 手动触发
 
 jobs:
@@ -29,12 +29,15 @@ jobs:
     - name: Generate Markdown
       env:
         FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
-        #$DIFY_API_KEY: ${{ secrets.DIFY_API_KEY }}
-        #DIFY_API_BASE_URL: ${{ secrets.DIFY_API_BASE_URL }}
       run: |
         python scripts/aibase_com/web_to_md.py
 
-    - name: Commit files
+    - name: Check for changes
+      run: |
+        git diff --exit-code || echo "Changes detected"
+
+    - name: Commit files if changed
+      if: ${{ success() && steps.Check_for_changes.outputs.exit_code != 0 }}
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
@@ -42,5 +45,6 @@ jobs:
         git commit -m "Generated daily content"
 
     - name: Push changes
+      if: ${{ success() && steps.Check_for_changes.outputs.exit_code != 0 }}
       run: |
         git push --force https://${{ secrets.PAT }}@github.com/${{ github.repository_owner }}/producthunt-daily-hot.git HEAD:main
