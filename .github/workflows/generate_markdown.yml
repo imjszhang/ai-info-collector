@@ -37,7 +37,6 @@ jobs:
         git diff --exit-code || echo "Changes detected"
 
     - name: Commit files if changed
-      if: ${{ success() && steps.Check_for_changes.outputs.exit_code != 0 }}
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
@@ -45,6 +44,5 @@ jobs:
         git commit -m "Generated new content"
 
     - name: Push changes
-      if: ${{ success() && steps.Check_for_changes.outputs.exit_code != 0 }}
       run: |
         git push --force https://${{ secrets.PAT }}@github.com/${{ github.repository_owner }}/ai-info-collector.git HEAD:main
