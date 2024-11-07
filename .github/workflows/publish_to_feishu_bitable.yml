@@ -37,3 +37,18 @@ jobs:
         FEISHU_BITABLE_TABLE_ID: ${{ secrets.FEISHU_BITABLE_TABLE_ID }}
       run: |
         python scripts/aibase_com/publish_to_feishu_bitable.py
+
+    - name: Check for changes
+      run: |
+        git diff --exit-code || echo "Changes detected"
+
+    - name: Commit files if changed
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add .
+        git commit -m "updated processed_records"
+
+    - name: Push changes
+      run: |
+        git push --force https://${{ secrets.PAT }}@github.com/${{ github.repository_owner }}/ai-info-collector.git HEAD:main
