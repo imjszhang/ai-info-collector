@@ -42,9 +42,9 @@ jobs:
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add .
-        git commit -m "Generated daily content"
+        git commit -m "Generated new content"
 
     - name: Push changes
       if: ${{ success() && steps.Check_for_changes.outputs.exit_code != 0 }}
       run: |
-        git push --force https://${{ secrets.PAT }}@github.com/${{ github.repository_owner }}/producthunt-daily-hot.git HEAD:main
+        git push --force https://${{ secrets.PAT }}@github.com/${{ github.repository_owner }}/ai-info-collector.git HEAD:main
